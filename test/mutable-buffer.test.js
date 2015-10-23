@@ -2,6 +2,8 @@
 
 var util = require('util');
 var t = require('chai').assert;
+var iconv = require('iconv-lite');
+iconv.extendNodeEncodings();
 var MutableBuffer = require('../').MutableBuffer;
 
 
@@ -153,7 +155,7 @@ describe('mutable-buffer', function () {
     t.equal(buffer.size(), 6);
   });
 
-  it('can add arbitrary buffer to the end', function () {
+  it('can write arbitrary buffer to the end', function () {
     var buffer = new MutableBuffer(4);
     buffer.writeCString('!!!');
     var result = buffer.write(new Buffer('@@@')).join();
@@ -171,6 +173,21 @@ describe('mutable-buffer', function () {
     it('can resize', function () {
       result = buffer.write('!!').join();
       t.equalBuffers(result, [33, 33, 0, 33, 33]);
+    });
+  });
+
+  describe('can write custom encoding string', function () {
+
+    it('can write utf8 cString too', function () {
+      var buffer = new MutableBuffer();
+      var result = buffer.writeCString('你好').join();
+      t.equalBuffers(result, [0xe4, 0xbd, 0xa0, 0xe5, 0xa5, 0xbd, 0x00]);
+    });
+
+    it('can write gbk cString too', function () {
+      var buffer = new MutableBuffer();
+      var result = buffer.writeCString('你好', 'gbk').join();
+      t.equalBuffers(result, [0xc4, 0xe3, 0xba, 0xc3, 0x00]);
     });
   });
 
