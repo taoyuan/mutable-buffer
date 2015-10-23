@@ -3,7 +3,6 @@
 var util = require('util');
 var t = require('chai').assert;
 var iconv = require('iconv-lite');
-iconv.extendNodeEncodings();
 var MutableBuffer = require('../').MutableBuffer;
 
 
@@ -178,19 +177,24 @@ describe('mutable-buffer', function () {
 
   describe('can write custom encoding string', function () {
 
-    it('can write utf8 cString too', function () {
+    it('can write utf8 string', function () {
       var buffer = new MutableBuffer();
-      var result = buffer.writeCString('你好').join();
-      t.equalBuffers(result, [0xe4, 0xbd, 0xa0, 0xe5, 0xa5, 0xbd, 0x00]);
+      var result = buffer.write('你好').join();
+      t.equalBuffers(result, [0xe4, 0xbd, 0xa0, 0xe5, 0xa5, 0xbd]);
     });
 
-    it('can write gbk cString too', function () {
+    it('can write gbk buffer string', function () {
       var buffer = new MutableBuffer();
-      var result = buffer.writeCString('你好', 'gbk').join();
+      var result = buffer.write(iconv.encode('你好', 'gbk')).join();
+      t.equalBuffers(result, [0xc4, 0xe3, 0xba, 0xc3]);
+    });
+
+    it('can write gbk buffer cString', function () {
+      var buffer = new MutableBuffer();
+      var result = buffer.writeCString(iconv.encode('你好', 'gbk')).join();
       t.equalBuffers(result, [0xc4, 0xe3, 0xba, 0xc3, 0x00]);
     });
   });
-
 
   describe('clearing', function () {
     var buffer = new MutableBuffer();
