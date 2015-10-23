@@ -6,14 +6,15 @@
   "author": {
     "name": "taoyuan",
     "email": "towyuan@outlook.com",
-    "url": ""
+    "url": "https://github.com/taoyuan/mutable-buffer"
   },
   "main": "index.js",
   "keywords": [
     "buffer",
     "mutable",
     "writable",
-    "node"
+    "node",
+    "nodejs"
   ],
   "repository": "taoyuan/mutable-buffer",
   "devDependencies": {
@@ -27,7 +28,7 @@
     "gulp-nsp": "^0.4.5",
     "gulp-plumber": "^1.0.0",
     "iconv-lite": "^0.4.13",
-    "mosca": "^0.32.1"
+    "mocha": "^2.3.3"
   },
   "scripts": {
     "prepublish": "gulp prepublish",
