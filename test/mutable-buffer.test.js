@@ -91,7 +91,7 @@ describe('mutable-buffer', function () {
     it('writing multiple number', function () {
       var buffer = new MutableBuffer();
       buffer.writeUInt32BE(1).writeUInt32BE(10).writeUInt32BE(0);
-      t.equal(buffer.size(), 12);
+      t.equal(buffer.size, 12);
       t.equalBuffers(buffer.join(), [0, 0, 0, 1, 0, 0, 0, 0x0a, 0, 0, 0, 0]);
     });
   });
@@ -100,7 +100,7 @@ describe('mutable-buffer', function () {
     it('after resize correct result returned', function () {
       var buffer = new MutableBuffer(10, 10);
       buffer.writeUInt32BE(1).writeUInt32BE(1).writeUInt32BE(1);
-      t.equal(buffer.size(), 12);
+      t.equal(buffer.size, 12);
       t.equal(buffer.capacity(), 20);
       t.equalBuffers(buffer.join(), [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1]);
     });
@@ -147,11 +147,11 @@ describe('mutable-buffer', function () {
 
   it('gets correct size', function () {
     var buffer = new MutableBuffer(5);
-    t.equal(buffer.size(), 0);
+    t.equal(buffer.size, 0);
     buffer.writeInt32BE(0);
-    t.equal(buffer.size(), 4);
+    t.equal(buffer.size, 4);
     buffer.writeCString('!');
-    t.equal(buffer.size(), 6);
+    t.equal(buffer.size, 6);
   });
 
   it('can write arbitrary buffer to the end', function () {
@@ -239,7 +239,7 @@ describe('mutable-buffer', function () {
       var buffer = new MutableBuffer(1);
       var result = buffer.writeCString('!').flush();
       t.equalBuffers(result, [33, 0]);
-      t.equal(buffer.size(), 0);
+      t.equal(buffer.size, 0);
     });
 
     it('flush a non-full buffer', function () {
@@ -248,7 +248,7 @@ describe('mutable-buffer', function () {
       var result = buffer.flush();
       t.equalBuffers(result, [33, 0]);
       t.equalBuffers(result, joinedResult);
-      t.equal(buffer.size(), 0);
+      t.equal(buffer.size, 0);
     });
 
     it('flush a buffer which requires resizing', function () {

@@ -16,22 +16,27 @@
     "node",
     "nodejs"
   ],
-  "repository": "taoyuan/mutable-buffer",
+  "repository": {
+    "type": "git",
+    "url": "taoyuan/mutable-buffer"
+  },
+  "publishConfig": {
+    "registry": "http://registry.npmjs.org"
+  },
   "devDependencies": {
-    "chai": "^3.4.0",
-    "gulp": "^3.6.0",
-    "gulp-coveralls": "^0.1.0",
-    "gulp-eslint": "^1.0.0",
+    "chai": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-coveralls": "^0.1.4",
+    "gulp-eslint": "^2.0.0",
     "gulp-exclude-gitignore": "^1.0.0",
-    "gulp-istanbul": "^0.9.0",
-    "gulp-mocha": "^2.0.0",
-    "gulp-nsp": "^0.4.5",
-    "gulp-plumber": "^1.0.0",
+    "gulp-istanbul": "^0.10.3",
+    "gulp-mocha": "^2.2.0",
+    "gulp-nsp": "^2.3.1",
+    "gulp-plumber": "^1.1.0",
     "iconv-lite": "^0.4.13",
-    "mocha": "^2.3.3"
+    "mocha": "^2.4.5"
   },
   "scripts": {
-    "prepublish": "gulp prepublish",
     "test": "gulp"
   },
   "license": "MIT"
