@@ -198,9 +198,20 @@ describe('mutable-buffer', function () {
 
   describe('write array', function () {
     it('can write binary array', function () {
-      var buffer = new MutableBuffer();
       var data = [0x01, 0x02];
+      var buffer = new MutableBuffer();
       var result = buffer.write(data).join();
+      t.equalBuffers(result, data);
+    });
+  });
+
+  describe('write mutable buffer', function () {
+    it('can write from another mutable buffer', function () {
+      var data = [0x01, 0x02];
+      var buffer = new MutableBuffer();
+      var source = new MutableBuffer();
+      source.write(data);
+      var result = buffer.write(source).join();
       t.equalBuffers(result, data);
     });
   });
