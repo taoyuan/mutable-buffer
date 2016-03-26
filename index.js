@@ -1,3 +1,6 @@
 'use strict';
 
-exports.MutableBuffer = require('./lib/mutable-buffer');
+var MutableBuffer = require('./lib/mutable-buffer');
+
+module.exports = exports = MutableBuffer;
+exports.MutableBuffer = MutableBuffer;
