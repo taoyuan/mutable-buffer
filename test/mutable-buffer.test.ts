@@ -3,7 +3,7 @@
 const util = require('util');
 const t = require('chai').assert;
 const iconv = require('iconv-lite');
-const MutableBuffer = require('../').MutableBuffer;
+const MutableBuffer = require('..').MutableBuffer;
 
 function spit(actual: any, expected: any, message: string) {
   console.log('');
