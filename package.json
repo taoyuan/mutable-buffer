@@ -20,24 +20,13 @@
     "type": "git",
     "url": "taoyuan/mutable-buffer"
   },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.com"
-  },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "gulp": "^3.9.1",
-    "gulp-coveralls": "^0.1.4",
-    "gulp-eslint": "^2.0.0",
-    "gulp-exclude-gitignore": "^1.0.0",
-    "gulp-istanbul": "^0.10.3",
-    "gulp-mocha": "^2.2.0",
-    "gulp-nsp": "^2.3.1",
-    "gulp-plumber": "^1.1.0",
-    "iconv-lite": "^0.4.13",
-    "mocha": "^2.4.5"
+    "chai": "^4.1.2",
+    "iconv-lite": "^0.4.21",
+    "mocha": "^5.1.1"
   },
   "scripts": {
-    "test": "gulp"
+    "test": "mocha test/**/*.test.js"
   },
   "license": "MIT"
 }

@@ -1,9 +1,9 @@
 'use strict';
 
-var util = require('util');
-var t = require('chai').assert;
-var iconv = require('iconv-lite');
-var MutableBuffer = require('../').MutableBuffer;
+const util = require('util');
+const t = require('chai').assert;
+const iconv = require('iconv-lite');
+const MutableBuffer = require('../').MutableBuffer;
 
 
 function spit(actual, expected, message) {
@@ -19,7 +19,7 @@ t.equalBuffers = function (actual, expected, message) {
     spit(actual, expected, message);
     t.equal(actual.length, expected.length);
   }
-  for (var i = 0; i < actual.length; i++) {
+  for (let i = 0; i < actual.length; i++) {
     if (actual[i] !== expected[i]) {
       spit(actual, expected, message);
     }
@@ -28,22 +28,22 @@ t.equalBuffers = function (actual, expected, message) {
 };
 
 function itWriteFixedNumber(type, val, expected) {
-  var fn = 'write' + type;
+  const fn = 'write' + type;
 
   it(fn + '(' + val + ')', function () {
-    var buffer = new MutableBuffer();
-    var result = buffer[fn](val).join();
+    const buffer = new MutableBuffer();
+    const result = buffer[fn](val).join();
     t.equalBuffers(result, expected, fn);
   });
 }
 
 
 function itWriteLengthNumber(type, val, length, expected) {
-  var fn = 'write' + type;
+  const fn = 'write' + type;
 
   it(fn + '(' + val + ')', function () {
-    var buffer = new MutableBuffer();
-    var result = buffer[fn](val, length).join();
+    const buffer = new MutableBuffer();
+    const result = buffer[fn](val, length).join();
     t.equalBuffers(result, expected, fn);
   });
 }
@@ -89,7 +89,7 @@ describe('mutable-buffer', function () {
     itWriteLengthNumber('IntLE', -0x1234567890ab, 6, [0x55, 0x6f, 0x87, 0xa9, 0xcb, 0xed]);
 
     it('writing multiple number', function () {
-      var buffer = new MutableBuffer();
+      const buffer = new MutableBuffer();
       buffer.writeUInt32BE(1).writeUInt32BE(10).writeUInt32BE(0);
       t.equal(buffer.size, 12);
       t.equalBuffers(buffer.join(), [0, 0, 0, 1, 0, 0, 0, 0x0a, 0, 0, 0, 0]);
@@ -98,7 +98,7 @@ describe('mutable-buffer', function () {
 
   describe('having to resize the buffer', function () {
     it('after resize correct result returned', function () {
-      var buffer = new MutableBuffer(10, 10);
+      const buffer = new MutableBuffer(10, 10);
       buffer.writeUInt32BE(1).writeUInt32BE(1).writeUInt32BE(1);
       t.equal(buffer.size, 12);
       t.equal(buffer.capacity(), 20);
@@ -108,45 +108,45 @@ describe('mutable-buffer', function () {
 
   describe('CString', function () {
     it('writes empty cstring', function () {
-      var buffer = new MutableBuffer();
-      var result = buffer.writeCString().join();
+      const buffer = new MutableBuffer();
+      const result = buffer.writeCString().join();
       t.equalBuffers(result, [0]);
     });
 
     it('writes two empty cstrings', function () {
-      var buffer = new MutableBuffer();
-      var result = buffer.writeCString('').writeCString('').join();
+      const buffer = new MutableBuffer();
+      const result = buffer.writeCString('').writeCString('').join();
       t.equalBuffers(result, [0, 0]);
     });
 
 
     it('writes non-empty cstring', function () {
-      var buffer = new MutableBuffer();
-      var result = buffer.writeCString('!!!').join();
+      const buffer = new MutableBuffer();
+      const result = buffer.writeCString('!!!').join();
       t.equalBuffers(result, [33, 33, 33, 0]);
     });
 
     it('resizes if reached end', function () {
-      var buffer = new MutableBuffer(3);
-      var result = buffer.writeCString('!!!').join();
+      const buffer = new MutableBuffer(3);
+      const result = buffer.writeCString('!!!').join();
       t.equalBuffers(result, [33, 33, 33, 0]);
     });
 
     it('writes multiple cstrings', function () {
-      var buffer = new MutableBuffer();
-      var result = buffer.writeCString('!').writeCString('!').join();
+      const buffer = new MutableBuffer();
+      const result = buffer.writeCString('!').writeCString('!').join();
       t.equalBuffers(result, [33, 0, 33, 0]);
     });
   });
 
   it('writes char', function () {
-    var buffer = new MutableBuffer(2);
-    var result = buffer.writeChar('a').writeChar('b').writeChar('c').join();
+    const buffer = new MutableBuffer(2);
+    const result = buffer.writeChar('a').writeChar('b').writeChar('c').join();
     t.equalBuffers(result, [0x61, 0x62, 0x63]);
   });
 
   it('gets correct size', function () {
-    var buffer = new MutableBuffer(5);
+    const buffer = new MutableBuffer(5);
     t.equal(buffer.size, 0);
     buffer.writeInt32BE(0);
     t.equal(buffer.size, 4);
@@ -155,15 +155,15 @@ describe('mutable-buffer', function () {
   });
 
   it('can write arbitrary buffer to the end', function () {
-    var buffer = new MutableBuffer(4);
+    const buffer = new MutableBuffer(4);
     buffer.writeCString('!!!');
-    var result = buffer.write(new Buffer('@@@')).join();
+    const result = buffer.write(Buffer.from('@@@')).join();
     t.equalBuffers(result, [33, 33, 33, 0, 0x40, 0x40, 0x40]);
   });
 
   describe('can write normal string', function () {
-    var buffer = new MutableBuffer(4);
-    var result = buffer.write('!').join();
+    const buffer = new MutableBuffer(4);
+    let result = buffer.write('!').join();
     t.equalBuffers(result, [33]);
     it('can write cString too', function () {
       result = buffer.writeCString('!').join();
@@ -178,46 +178,46 @@ describe('mutable-buffer', function () {
   describe('can write custom encoding string', function () {
 
     it('can write utf8 string', function () {
-      var buffer = new MutableBuffer();
-      var result = buffer.write('你好').join();
+      const buffer = new MutableBuffer();
+      const result = buffer.write('你好').join();
       t.equalBuffers(result, [0xe4, 0xbd, 0xa0, 0xe5, 0xa5, 0xbd]);
     });
 
     it('can write gbk buffer string', function () {
-      var buffer = new MutableBuffer();
-      var result = buffer.write(iconv.encode('你好', 'gbk')).join();
+      const buffer = new MutableBuffer();
+      const result = buffer.write(iconv.encode('你好', 'gbk')).join();
       t.equalBuffers(result, [0xc4, 0xe3, 0xba, 0xc3]);
     });
 
     it('can write gbk buffer cString', function () {
-      var buffer = new MutableBuffer();
-      var result = buffer.writeCString(iconv.encode('你好', 'gbk')).join();
+      const buffer = new MutableBuffer();
+      const result = buffer.writeCString(iconv.encode('你好', 'gbk')).join();
       t.equalBuffers(result, [0xc4, 0xe3, 0xba, 0xc3, 0x00]);
     });
   });
 
   describe('write array', function () {
     it('can write binary array', function () {
-      var data = [0x01, 0x02];
-      var buffer = new MutableBuffer();
-      var result = buffer.write(data).join();
+      const data = [0x01, 0x02];
+      const buffer = new MutableBuffer();
+      const result = buffer.write(data).join();
       t.equalBuffers(result, data);
     });
   });
 
   describe('write mutable buffer', function () {
     it('can write from another mutable buffer', function () {
-      var data = [0x01, 0x02];
-      var buffer = new MutableBuffer();
-      var source = new MutableBuffer();
+      const data = [0x01, 0x02];
+      const buffer = new MutableBuffer();
+      const source = new MutableBuffer();
       source.write(data);
-      var result = buffer.write(source).join();
+      const result = buffer.write(source).join();
       t.equalBuffers(result, data);
     });
   });
 
   describe('clearing', function () {
-    var buffer = new MutableBuffer();
+    const buffer = new MutableBuffer();
     buffer.writeCString('@!!#!#');
     buffer.writeInt32BE(10401);
     it('clears', function () {
@@ -225,11 +225,11 @@ describe('mutable-buffer', function () {
       t.equalBuffers(buffer.join(), []);
     });
     it('writing more', function () {
-      var joinedResult = buffer.writeCString('!').writeInt32BE(9).writeInt16BE(2).join();
+      const joinedResult = buffer.writeCString('!').writeInt32BE(9).writeInt16BE(2).join();
       t.equalBuffers(joinedResult, [33, 0, 0, 0, 0, 9, 0, 2]);
     });
     it('returns result', function () {
-      var flushedResult = buffer.flush();
+      const flushedResult = buffer.flush();
       t.equalBuffers(flushedResult, [33, 0, 0, 0, 0, 9, 0, 2]);
     });
     it('clears the writer', function () {
@@ -239,31 +239,31 @@ describe('mutable-buffer', function () {
   });
 
   it('resizing to much larger', function () {
-    var buffer = new MutableBuffer(2);
-    var string = '!!!!!!!!';
-    var result = buffer.writeCString(string).flush();
+    const buffer = new MutableBuffer(2);
+    const string = '!!!!!!!!';
+    const result = buffer.writeCString(string).flush();
     t.equalBuffers(result, [33, 33, 33, 33, 33, 33, 33, 33, 0]);
   });
 
   describe('flush', function () {
     it('flush a full buffer', function () {
-      var buffer = new MutableBuffer(1);
-      var result = buffer.writeCString('!').flush();
+      const buffer = new MutableBuffer(1);
+      const result = buffer.writeCString('!').flush();
       t.equalBuffers(result, [33, 0]);
       t.equal(buffer.size, 0);
     });
 
     it('flush a non-full buffer', function () {
-      var buffer = new MutableBuffer(10).writeCString('!');
-      var joinedResult = buffer.join();
-      var result = buffer.flush();
+      const buffer = new MutableBuffer(10).writeCString('!');
+      const joinedResult = buffer.join();
+      const result = buffer.flush();
       t.equalBuffers(result, [33, 0]);
       t.equalBuffers(result, joinedResult);
       t.equal(buffer.size, 0);
     });
 
     it('flush a buffer which requires resizing', function () {
-      var result = new MutableBuffer(2).writeCString('!!!!!!!!').flush();
+      const result = new MutableBuffer(2).writeCString('!!!!!!!!').flush();
       t.equalBuffers(result, [33, 33, 33, 33, 33, 33, 33, 33, 0]);
     });
   });
