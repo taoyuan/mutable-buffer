@@ -5,8 +5,7 @@ const t = require('chai').assert;
 const iconv = require('iconv-lite');
 const MutableBuffer = require('../').MutableBuffer;
 
-
-function spit(actual, expected, message) {
+function spit(actual: any, expected: any, message: string) {
   console.log('');
   console.log(message);
   console.log('actual ' + util.inspect(actual));
@@ -14,7 +13,7 @@ function spit(actual, expected, message) {
   console.log('');
 }
 
-t.equalBuffers = function (actual, expected, message) {
+t.equalBuffers = function (actual: any, expected: any, message: string) {
   if (actual.length !== expected.length) {
     spit(actual, expected, message);
     t.equal(actual.length, expected.length);
@@ -27,7 +26,7 @@ t.equalBuffers = function (actual, expected, message) {
   }
 };
 
-function itWriteFixedNumber(type, val, expected) {
+function itWriteFixedNumber(type: string, val: any, expected: any) {
   const fn = 'write' + type;
 
   it(fn + '(' + val + ')', function () {
@@ -38,7 +37,7 @@ function itWriteFixedNumber(type, val, expected) {
 }
 
 
-function itWriteLengthNumber(type, val, length, expected) {
+function itWriteLengthNumber(type: string, val: any, length: number, expected: any) {
   const fn = 'write' + type;
 
   it(fn + '(' + val + ')', function () {
