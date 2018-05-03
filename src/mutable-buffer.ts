@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const DEFAULT_INITIAL_SIZE = 1024;
 const DEFAULT_BLOCK_SIZE = 1024;
@@ -78,7 +78,7 @@ export class MutableBuffer {
       data.buffer.copy(this._buffer, this._size);
       this._size += data.size;
     } else {
-      data = data + '';
+      data = data + "";
       const len = Buffer.byteLength(data, encoding);
       this._ensure(len);
       this._buffer.write(data, this._size, len, encoding);
@@ -87,7 +87,7 @@ export class MutableBuffer {
     return this;
   }
 
-  writeCString(data?: string|Buffer, encoding?: string) {
+  writeCString(data?: string | Buffer, encoding?: string) {
     //just write a 0 for empty or null strings
     if (!data) {
       this._ensure(1);
@@ -115,13 +115,23 @@ export class MutableBuffer {
 
   writeUIntLE(value: number, byteLength: number, noAssert?: boolean) {
     this._ensure(byteLength >>> 0);
-    this._size = this._buffer.writeUIntLE(value, this._size, byteLength, noAssert);
+    this._size = this._buffer.writeUIntLE(
+      value,
+      this._size,
+      byteLength,
+      noAssert
+    );
     return this;
   }
 
   writeUIntBE(value: number, byteLength: number, noAssert?: boolean) {
     this._ensure(byteLength >>> 0);
-    this._size = this._buffer.writeUIntBE(value, this._size, byteLength, noAssert);
+    this._size = this._buffer.writeUIntBE(
+      value,
+      this._size,
+      byteLength,
+      noAssert
+    );
     return this;
   }
 
@@ -157,13 +167,23 @@ export class MutableBuffer {
 
   writeIntLE(value: number, byteLength: number, noAssert?: boolean) {
     this._ensure(byteLength >>> 0);
-    this._size = this._buffer.writeIntLE(value, this._size, byteLength, noAssert);
+    this._size = this._buffer.writeIntLE(
+      value,
+      this._size,
+      byteLength,
+      noAssert
+    );
     return this;
   }
 
   writeIntBE(value: number, byteLength: number, noAssert?: boolean) {
     this._ensure(byteLength >>> 0);
-    this._size = this._buffer.writeIntBE(value, this._size, byteLength, noAssert);
+    this._size = this._buffer.writeIntBE(
+      value,
+      this._size,
+      byteLength,
+      noAssert
+    );
     return this;
   }
 
@@ -220,4 +240,4 @@ export class MutableBuffer {
     this._size = this._buffer.writeDoubleBE(value, this._size, noAssert);
     return this;
   }
-};
+}
