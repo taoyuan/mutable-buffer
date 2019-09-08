@@ -1,5 +1,7 @@
 # mutable-buffer 
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/taoyuan/mutable-buffer.svg)](https://greenkeeper.io/)
+
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage percentage][coveralls-image]][coveralls-url]
 
 > A mutable buffer library for node.js
