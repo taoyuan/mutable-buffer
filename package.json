@@ -29,6 +29,7 @@
     "release": "np",
     "build": "tib-tsc",
     "build:full": "npm ci --ignore-scripts && npm run clean && npm run build",
+    "coverage:summary": "tib-nyc report --reporter=text-summary",
     "coverage": "tib-nyc report --reporter=text-lcov | coveralls",
     "precoverage": "npm test",
     "lint": "npm run prettier:check && npm run eslint",
@@ -49,6 +50,9 @@
     "preunit": "npm run build",
     "unit": "tib-mocha \"dist/__tests__/unit/**/*.js\""
   },
+  "dependencies": {
+    "buffer": "^5.6.0"
+  },
   "devDependencies": {
     "@tib/build": "^6.3.4",
     "@tib/eslint-config": "^8.2.4",
@@ -60,6 +64,7 @@
     "iconv-lite": "^0.6.2",
     "mocha": "^8.1.3",
     "np": "^6.5.0",
+    "source-map-support": "^0.5.19",
     "typescript": "^4.0.3"
   },
   "license": "MIT",
@@ -69,7 +74,7 @@
     "src",
     "!*/__tests__"
   ],
-  "dependencies": {
-    "source-map-support": "^0.5.19"
+  "browser": {
+    "dist/buffer": "dist/buffer-browser"
   }
 }

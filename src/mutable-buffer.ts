@@ -1,3 +1,5 @@
+import {Buffer} from './buffer';
+
 const DEFAULT_INITIAL_SIZE = 1024;
 const DEFAULT_BLOCK_SIZE = 1024;
 
