@@ -1,5 +1,3 @@
-"use strict";
-
 const DEFAULT_INITIAL_SIZE = 1024;
 const DEFAULT_BLOCK_SIZE = 1024;
 
@@ -13,7 +11,7 @@ export class MutableBuffer {
     return this._size;
   }
 
-  get buffer() {
+  get buffer(): Buffer {
     return this._buffer;
   }
 
@@ -21,12 +19,9 @@ export class MutableBuffer {
     return this._buffer;
   }
 
-  constructor(size: number, blockSize: number) {
-    if (!(this instanceof MutableBuffer)) {
-      return new MutableBuffer(size, blockSize);
-    }
-    this._initialSize = size || DEFAULT_INITIAL_SIZE;
-    this._blockSize = blockSize || DEFAULT_BLOCK_SIZE;
+  constructor(size?: number, blockSize?: number) {
+    this._initialSize = size ?? DEFAULT_INITIAL_SIZE;
+    this._blockSize = blockSize ?? DEFAULT_BLOCK_SIZE;
 
     this._buffer = Buffer.alloc(this._initialSize);
     this._size = 0;
@@ -62,7 +57,7 @@ export class MutableBuffer {
     return result;
   }
 
-  write(data: any, encoding?: string) {
+  write(data: any, encoding?: BufferEncoding) {
     if (Buffer.isBuffer(data)) {
       this._ensure(data.length);
       data.copy(this._buffer, this._size);
@@ -73,12 +68,12 @@ export class MutableBuffer {
         this._buffer[this._size + i] = data[i];
       }
       this._size += data.length;
-    } else if (data && data.buffer && data.size) {
+    } else if (data?.buffer && data.size) {
       this._ensure(data.size);
       data.buffer.copy(this._buffer, this._size);
       this._size += data.size;
     } else {
-      data = data + "";
+      data = data + '';
       const len = Buffer.byteLength(data, encoding);
       this._ensure(len);
       this._buffer.write(data, this._size, len, encoding);
@@ -87,7 +82,7 @@ export class MutableBuffer {
     return this;
   }
 
-  writeCString(data?: string | Buffer, encoding?: string) {
+  writeCString(data?: string | Buffer, encoding?: BufferEncoding) {
     //just write a 0 for empty or null strings
     if (!data) {
       this._ensure(1);
@@ -113,131 +108,111 @@ export class MutableBuffer {
     return this;
   }
 
-  writeUIntLE(value: number, byteLength: number, noAssert?: boolean) {
+  writeUIntLE(value: number, byteLength: number) {
     this._ensure(byteLength >>> 0);
-    this._size = this._buffer.writeUIntLE(
-      value,
-      this._size,
-      byteLength,
-      noAssert
-    );
+    this._size = this._buffer.writeUIntLE(value, this._size, byteLength);
     return this;
   }
 
-  writeUIntBE(value: number, byteLength: number, noAssert?: boolean) {
+  writeUIntBE(value: number, byteLength: number) {
     this._ensure(byteLength >>> 0);
-    this._size = this._buffer.writeUIntBE(
-      value,
-      this._size,
-      byteLength,
-      noAssert
-    );
+    this._size = this._buffer.writeUIntBE(value, this._size, byteLength);
     return this;
   }
 
-  writeUInt8(value: number, noAssert?: boolean) {
+  writeUInt8(value: number) {
     this._ensure(1);
-    this._size = this._buffer.writeUInt8(value, this._size, noAssert);
+    this._size = this._buffer.writeUInt8(value, this._size);
     return this;
   }
 
-  writeUInt16LE(value: number, noAssert?: boolean) {
+  writeUInt16LE(value: number) {
     this._ensure(2);
-    this._size = this._buffer.writeUInt16LE(value, this._size, noAssert);
+    this._size = this._buffer.writeUInt16LE(value, this._size);
     return this;
   }
 
-  writeUInt16BE(value: number, noAssert?: boolean) {
+  writeUInt16BE(value: number) {
     this._ensure(2);
-    this._size = this._buffer.writeUInt16BE(value, this._size, noAssert);
+    this._size = this._buffer.writeUInt16BE(value, this._size);
     return this;
   }
 
-  writeUInt32LE(value: number, noAssert?: boolean) {
+  writeUInt32LE(value: number) {
     this._ensure(4);
-    this._size = this._buffer.writeUInt32LE(value, this._size, noAssert);
+    this._size = this._buffer.writeUInt32LE(value, this._size);
     return this;
   }
 
-  writeUInt32BE(value: number, noAssert?: boolean) {
+  writeUInt32BE(value: number) {
     this._ensure(4);
-    this._size = this._buffer.writeUInt32BE(value, this._size, noAssert);
+    this._size = this._buffer.writeUInt32BE(value, this._size);
     return this;
   }
 
-  writeIntLE(value: number, byteLength: number, noAssert?: boolean) {
+  writeIntLE(value: number, byteLength: number) {
     this._ensure(byteLength >>> 0);
-    this._size = this._buffer.writeIntLE(
-      value,
-      this._size,
-      byteLength,
-      noAssert
-    );
+    this._size = this._buffer.writeIntLE(value, this._size, byteLength);
     return this;
   }
 
-  writeIntBE(value: number, byteLength: number, noAssert?: boolean) {
+  writeIntBE(value: number, byteLength: number) {
     this._ensure(byteLength >>> 0);
-    this._size = this._buffer.writeIntBE(
-      value,
-      this._size,
-      byteLength,
-      noAssert
-    );
+    this._size = this._buffer.writeIntBE(value, this._size, byteLength);
     return this;
   }
 
-  writeInt8(value: number, noAssert?: boolean) {
+  writeInt8(value: number) {
     this._ensure(1);
-    this._size = this._buffer.writeInt8(value, this._size, noAssert);
+    this._size = this._buffer.writeInt8(value, this._size);
     return this;
   }
 
-  writeInt16LE(value: number, noAssert?: boolean) {
+  writeInt16LE(value: number) {
     this._ensure(2);
-    this._size = this._buffer.writeInt16LE(value, this._size, noAssert);
+    this._size = this._buffer.writeInt16LE(value, this._size);
     return this;
   }
 
-  writeInt16BE(value: number, noAssert?: boolean) {
+  writeInt16BE(value: number) {
     this._ensure(2);
-    this._size = this._buffer.writeInt16BE(value, this._size, noAssert);
+    this._size = this._buffer.writeInt16BE(value, this._size);
     return this;
   }
 
-  writeInt32LE(value: number, noAssert?: boolean) {
+  writeInt32LE(value: number) {
     this._ensure(4);
-    this._size = this._buffer.writeInt32LE(value, this._size, noAssert);
+    this._size = this._buffer.writeInt32LE(value, this._size);
     return this;
   }
 
-  writeInt32BE(value: number, noAssert?: boolean) {
+  writeInt32BE(value: number) {
     this._ensure(4);
-    this._size = this._buffer.writeInt32BE(value, this._size, noAssert);
+    this._size = this._buffer.writeInt32BE(value, this._size);
     return this;
   }
 
-  writeFloatLE(value: number, noAssert?: boolean) {
+  writeFloatLE(value: number) {
     this._ensure(4);
-    this._size = this._buffer.writeFloatLE(value, this._size, noAssert);
+    this._size = this._buffer.writeFloatLE(value, this._size);
     return this;
   }
 
-  writeFloatBE(value: number, noAssert?: boolean) {
+  writeFloatBE(value: number) {
     this._ensure(4);
-    this._size = this._buffer.writeFloatBE(value, this._size, noAssert);
+    this._size = this._buffer.writeFloatBE(value, this._size);
     return this;
   }
 
-  writeDoubleLE(value: number, noAssert?: boolean) {
+  writeDoubleLE(value: number) {
     this._ensure(8);
-    this._size = this._buffer.writeDoubleLE(value, this._size, noAssert);
+    this._size = this._buffer.writeDoubleLE(value, this._size);
     return this;
   }
 
-  writeDoubleBE(value: number, noAssert?: boolean) {
+  writeDoubleBE(value: number) {
     this._ensure(8);
-    this._size = this._buffer.writeDoubleBE(value, this._size, noAssert);
+    this._size = this._buffer.writeDoubleBE(value, this._size);
     return this;
   }
 }

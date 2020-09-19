@@ -1,0 +1,13 @@
+{
+  "include": [
+    "dist"
+  ],
+  "extension": [
+    ".js",
+    ".ts"
+  ],
+  "reporter": [
+    "html"
+  ],
+  "exclude-after-remap": false
+}
