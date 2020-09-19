@@ -76,6 +76,7 @@
     "!*/__tests__"
   ],
   "browser": {
-    "dist/buffer": "dist/buffer-browser"
+    "./buffer": "./buffer-browser",
+    "./dist/buffer": "./dist/buffer-browser"
   }
 }
