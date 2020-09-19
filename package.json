@@ -51,7 +51,8 @@
     "unit": "tib-mocha \"dist/__tests__/unit/**/*.js\""
   },
   "dependencies": {
-    "buffer": "^5.6.0"
+    "buffer": "^5.6.0",
+    "tslib": "^2.0.1"
   },
   "devDependencies": {
     "@tib/build": "^6.3.4",
