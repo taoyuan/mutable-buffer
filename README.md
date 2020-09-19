@@ -14,7 +14,7 @@ $ npm install --save mutable-buffer
 ## Usage
 
 ```js
-const { MutableBuffer } = require('mutable-buffer');
+const {MutableBuffer} = require('mutable-buffer');
 
 const buffer = new MutableBuffer(/* initialSize, blockSize */);
 
