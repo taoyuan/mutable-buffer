@@ -3,3 +3,16 @@ node_js:
   - 'v14'
   - 'v12'
   - 'v10'
+branches:
+  only:
+    - master
+cache:
+  directories:
+    - node_modules
+before_install:
+  - npm update
+install:
+  - npm install
+script:
+  - npm test
+  - npm run coverage

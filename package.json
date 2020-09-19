@@ -29,7 +29,7 @@
     "release": "np",
     "build": "tib-tsc",
     "build:full": "npm ci --ignore-scripts && npm run clean && npm run build",
-    "coverage": "tib-nyc report --reporter=text-summary | coveralls",
+    "coverage": "tib-nyc report --reporter=text-lcov | coveralls",
     "precoverage": "npm test",
     "lint": "npm run prettier:check && npm run eslint",
     "lint:fix": "npm run eslint:fix && npm run prettier:fix",
