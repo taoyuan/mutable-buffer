@@ -2,6 +2,7 @@ import util from 'util';
 import iconv from 'iconv-lite';
 import {expect} from '@tib/testlab';
 import {MutableBuffer} from '..';
+import {Buffer} from '../buffer';
 
 function spit(actual: any, expected: any, message?: string) {
   console.log('');
@@ -311,6 +312,13 @@ describe('mutable-buffer', function () {
     it('flush a buffer which requires resizing', function () {
       const result = new MutableBuffer(2).writeCString('!!!!!!!!').flush();
       assertBuffers(result, [33, 33, 33, 33, 33, 33, 33, 33, 0]);
+    });
+  });
+
+  describe('native buffer', function () {
+    it('should return native buffer instance', function () {
+      const mb = new MutableBuffer();
+      expect(mb.nativeBuffer).instanceOf(Buffer);
     });
   });
 });
