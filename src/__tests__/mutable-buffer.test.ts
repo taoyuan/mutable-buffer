@@ -395,6 +395,5 @@ describe('mutable-buffer', function () {
       trimLeft: [],
       trimRight: [],
     });
-
   });
 });
