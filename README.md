@@ -3,15 +3,17 @@
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]
 [![Coverage percentage][coveralls-image]][coveralls-url]
 
-> A mutable buffer library for node.js
+> A mutable buffer library for both node.js and browser
 
 ## Install
 
 ```sh
-$ npm install --save mutable-buffer
+$ npm install mutable-buffer
 ```
 
 ## Usage
+
+### Basic usage
 
 ```js
 const {MutableBuffer} = require('mutable-buffer');
@@ -45,6 +47,26 @@ result = buffer.flush();
 
 // clear manual
 buffer.clear();
+```
+
+### Trim null characters
+
+```js
+const {MutableBuffer} = require('mutable-buffer');
+
+const buffer = new MutableBuffer(/* initialSize, blockSize */);
+
+// trimLeft
+buffer.write([0x00, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00]);
+buffer.trimLeft().flush(); // => [0x01, 0x02, 0x00, 0x00, 0x00]
+
+// trimRight
+buffer.write([0x00, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00]);
+buffer.trimRight().flush(); // => [0x00, 0x00, 0x01, 0x02]
+
+// trim
+buffer.write([0x00, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00]);
+buffer.trim().flush(); // => [0x01, 0x02]
 ```
 
 ## License
