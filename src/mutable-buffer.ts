@@ -217,4 +217,72 @@ export class MutableBuffer {
     this._size = this._buffer.writeDoubleBE(value, this._size);
     return this;
   }
+
+  trim() {
+    if (this.size <= 0) {
+      return this;
+    }
+
+    let begin = 0;
+    let end = 0;
+
+    for (let i = 0; i < this.size; i++) {
+      if (this._buffer[i]) {
+        begin = i;
+        break;
+      }
+    }
+
+    for (let i = this.size; i > 0; i--) {
+      if (this._buffer[i - 1]) {
+        end = i;
+        break;
+      }
+    }
+
+    if (begin === 0 && end === this.size) {
+      return this;
+    }
+
+    this._buffer = this._buffer.slice(begin, end);
+    this._size = end - begin;
+    return this;
+  }
+
+  trimLeft() {
+    if (this.size <= 0 || this._buffer[0]) {
+      return this;
+    }
+
+    for (let i = 0; i < this.size; i++) {
+      if (this._buffer[i]) {
+        this._buffer = this._buffer.slice(i);
+        this._size = this.size - i;
+        return this;
+      }
+    }
+    if (this.size > 0) {
+      this._size = 0;
+    }
+    return this;
+  }
+
+  trimRight() {
+    if (this.size <= 0 || this._buffer[this.size - 1]) {
+      return this;
+    }
+
+    for (let i = this.size; i > 0; i--) {
+      if (this._buffer[i - 1]) {
+        this._buffer = this._buffer.slice(0, i);
+        this._size = i;
+        return this;
+      }
+    }
+
+    if (this.size > 0) {
+      this._size = 0;
+    }
+    return this;
+  }
 }
