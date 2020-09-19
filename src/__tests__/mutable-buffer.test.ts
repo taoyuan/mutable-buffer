@@ -2,7 +2,6 @@ import util from 'util';
 import iconv from 'iconv-lite';
 import {expect} from '@tib/testlab';
 import {MutableBuffer} from '..';
-import {Buffer} from '../buffer';
 
 function spit(actual: any, expected: any, message?: string) {
   console.log('');
