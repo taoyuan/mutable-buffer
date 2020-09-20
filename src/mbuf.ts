@@ -1,11 +1,23 @@
 const DEFAULT_INITIAL_SIZE = 1024;
 const DEFAULT_BLOCK_SIZE = 1024;
 
-export class MutableBuffer {
+export class BaseMutableBuffer {
+  static Buffer: typeof Buffer;
+
+  static readonly target: string;
+
   protected _initialSize: number;
   protected _blockSize: number;
   protected _size: number;
   protected _buffer: Buffer;
+
+  static create(size?: number, blockSize?: number) {
+    return new this(size, blockSize);
+  }
+
+  get Buffer(): typeof Buffer {
+    return (<any>this.constructor).Buffer;
+  }
 
   get size() {
     return this._size;
@@ -23,7 +35,7 @@ export class MutableBuffer {
     this._initialSize = size ?? DEFAULT_INITIAL_SIZE;
     this._blockSize = blockSize ?? DEFAULT_BLOCK_SIZE;
 
-    this._buffer = Buffer.alloc(this._initialSize);
+    this._buffer = this.Buffer.alloc(this._initialSize);
     this._size = 0;
   }
 
@@ -34,7 +46,9 @@ export class MutableBuffer {
       const factor = Math.ceil((size - remaining) / this._blockSize);
 
       const oldBuffer = this._buffer;
-      this._buffer = Buffer.alloc(oldBuffer.length + this._blockSize * factor);
+      this._buffer = this.Buffer.alloc(
+        oldBuffer.length + this._blockSize * factor,
+      );
       oldBuffer.copy(this._buffer);
     }
   }
@@ -58,7 +72,7 @@ export class MutableBuffer {
   }
 
   write(data: any, encoding?: BufferEncoding) {
-    if (Buffer.isBuffer(data)) {
+    if (isBuffer(data)) {
       this._ensure(data.length);
       data.copy(this._buffer, this._size);
       this._size += data.length;
@@ -74,7 +88,7 @@ export class MutableBuffer {
       this._size += data.size;
     } else {
       data = data + '';
-      const len = Buffer.byteLength(data, encoding);
+      const len = this.Buffer.byteLength(data, encoding);
       this._ensure(len);
       this._buffer.write(data, this._size, len, encoding);
       this._size += len;
@@ -86,12 +100,12 @@ export class MutableBuffer {
     //just write a 0 for empty or null strings
     if (!data) {
       this._ensure(1);
-    } else if (Buffer.isBuffer(data)) {
+    } else if (isBuffer(data)) {
       this._ensure(data.length);
       data.copy(this._buffer, this._size);
       this._size += data.length;
     } else {
-      const len = Buffer.byteLength(data, encoding);
+      const len = this.Buffer.byteLength(data, encoding);
       this._ensure(len + 1); //+1 for null terminator
       this._buffer.write(data, this._size, len, encoding);
       this._size += len;
@@ -283,4 +297,11 @@ export class MutableBuffer {
     }
     return this;
   }
+}
+
+function isBuffer(obj: any): obj is Buffer {
+  return (
+    typeof obj?.constructor.isBuffer === 'function' &&
+    obj.constructor.isBuffer(obj)
+  );
 }
