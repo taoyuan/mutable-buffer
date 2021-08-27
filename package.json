@@ -1,6 +1,6 @@
 {
   "name": "mutable-buffer",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "A mutable buffer library for node.js",
   "homepage": "https://github.com/taoyuan/mutable-buffer",
   "author": {
@@ -21,60 +21,65 @@
     "node",
     "nodejs"
   ],
-  "repository": {
-    "type": "git",
-    "url": "taoyuan/mutable-buffer"
-  },
-  "scripts": {
-    "prerelease": "cross-env CI=1 npm run test",
-    "release": "np",
-    "build": "tib-tsc",
-    "build:full": "npm ci --ignore-scripts && npm run clean && npm run build",
-    "coverage:summary": "tib-nyc report --reporter=text-summary",
-    "coverage": "tib-nyc report --reporter=text-lcov | coveralls",
-    "precoverage": "npm test",
-    "lint": "npm run prettier:check && npm run eslint",
-    "lint:fix": "npm run eslint:fix && npm run prettier:fix",
-    "eslint": "tib-eslint --report-unused-disable-directives --cache .",
-    "eslint:fix": "npm run eslint -- --fix",
-    "prettier:cli": "tib-prettier \"**/*.ts\" \"**/*.js\" \"**/*.md\"",
-    "prettier:check": "npm run prettier:cli -- --check",
-    "prettier:fix": "npm run prettier:cli -- --write",
-    "format": "npm run prettier:fix",
-    "clean": "tib-clean dist coverage .nyc_output *.tsbuildinfo",
-    "pretest": "npm run clean && npm run format",
-    "test": "tib-nyc npm run mocha",
-    "test:ci": "tib-nyc npm run mocha",
-    "posttest": "npm run lint",
-    "premocha": "npm run build",
-    "mocha": "tib-mocha \"dist/__tests__/**/*.js\"",
-    "preunit": "npm run build",
-    "unit": "tib-mocha \"dist/__tests__/unit/**/*.js\""
-  },
-  "dependencies": {
-    "buffer": "^5.6.0",
-    "tslib": "^2.0.1"
-  },
-  "devDependencies": {
-    "@tib/build": "^6.3.4",
-    "@tib/eslint-config": "^8.2.4",
-    "@tib/testlab": "^3.4.4",
-    "@types/mocha": "^8.0.3",
-    "@types/node": "^14.11.1",
-    "coveralls": "^3.1.0",
-    "cross-env": "^7.0.2",
-    "iconv-lite": "^0.6.2",
-    "mocha": "^8.1.3",
-    "np": "^6.5.0",
-    "source-map-support": "^0.5.19",
-    "ts-node": "^9.0.0",
-    "typescript": "^4.0.3"
-  },
   "license": "MIT",
   "files": [
     "README.md",
     "dist",
     "src",
     "!*/__tests__"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "taoyuan/mutable-buffer"
+  },
+  "scripts": {
+    "prerelease": "cross-env CI=1 npm run test",
+    "release": "np --no-2fa",
+    "build": "lb-tsc -b",
+    "build:full": "npm ci --ignore-scripts && npm run clean && npm run build",
+    "coverage": "lb-nyc report && open-cli coverage/index.html",
+    "precoverage": "npm test",
+    "coverage:ci": "lb-nyc report --reporter=text-summary",
+    "precoverage:ci": "npm test",
+    "lint": "npm run prettier:check && npm run eslint",
+    "lint:fix": "npm run eslint:fix && npm run prettier:fix",
+    "eslint": "lb-eslint --report-unused-disable-directives --cache .",
+    "eslint:fix": "npm run eslint -- --fix",
+    "prettier:cli": "lb-prettier \"**/*.ts\" \"**/*.js\" \"**/*.md\"",
+    "prettier:check": "npm run prettier:cli -- --check",
+    "prettier:fix": "npm run prettier:cli -- --write",
+    "format": "npm run prettier:fix",
+    "clean": "lb-clean dist coverage .nyc_output *.tsbuildinfo",
+    "pretest": "npm run clean && npm run format",
+    "test": "lb-nyc npm run mocha",
+    "test:ci": "lb-nyc npm run mocha",
+    "posttest": "npm run lint",
+    "premocha": "npm run build",
+    "mocha": "lb-mocha --allow-console-logs \"dist/__tests__/**/*.js\"",
+    "preunit": "npm run build",
+    "unit": "lb-mocha --allow-console-logs \"dist/__tests__/unit/**/*.js\""
+  },
+  "devDependencies": {
+    "@loopback/build": "^7.0.0",
+    "@loopback/eslint-config": "^11.0.0",
+    "@loopback/testlab": "^3.4.2",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.7.2",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
+    "benchmark": "^2.1.4",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-eslint-plugin": "^3.5.3",
+    "eslint-plugin-mocha": "^9.0.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "iconv-lite": "^0.6.3",
+    "mocha": "^9.1.0",
+    "np": "^7.5.0",
+    "open-cli": "^7.0.0",
+    "prettier": "^2.3.2",
+    "random-string": "^0.2.0",
+    "typescript": "^4.4.0"
+  }
 }

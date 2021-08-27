@@ -40,10 +40,16 @@ buffer.size();
 buffer.capacity();
 
 // return a sliced Buffer instance
-result = buffer.join();
+result = buffer.render();
+
+// return a fresh Buffer instance
+result = buffer.render(true);
 
 // or return a sliced Buffer instance and clear buffer
 result = buffer.flush();
+
+// or return a fresh Buffer instance and clear buffer
+result = buffer.flush(true);
 
 // clear manual
 buffer.clear();
@@ -71,12 +77,11 @@ buffer.trim().flush(); // => [0x01, 0x02]
 
 ## Use in browser
 
-`mutable-buffer` introduced [feross/buffer](https://github.com/feross/buffer) to
-support for the browser out of box in `v3.0`.
+`mutable-buffer` introduced [feross/buffer](https://github.com/feross/buffer) to support for the browser out of box in
+`v3.0`.
 
-A front-end packaging tool like `webpack` will recognize the `browser` entry
-defined in `pacakge.json` and use the browser version of `mutable-buffer` by
-default.
+A front-end packaging tool like `webpack` will recognize the `browser` entry defined in `pacakge.json` and use the
+browser version of `mutable-buffer` by default.
 
 You can print `MutableBuffer.target` to confirm that.
 

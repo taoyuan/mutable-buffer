@@ -1,4 +1,4 @@
-import {expect} from '@tib/testlab';
+import {expect} from '@loopback/testlab';
 import {testMutableBuffer} from './test-suite';
 import {MutableBuffer} from '../browser';
 

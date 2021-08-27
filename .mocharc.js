@@ -1,1 +1,1 @@
-module.exports = require('@tib/build/config/.mocharc.json');
+module.exports = require('@loopback/build/config/.mocharc.json');

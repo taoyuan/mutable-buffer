@@ -8,35 +8,37 @@ export class BaseMutableBuffer {
 
   protected _initialSize: number;
   protected _blockSize: number;
+
+  constructor(size?: number, blockSize?: number) {
+    this._initialSize = size ?? DEFAULT_INITIAL_SIZE;
+    this._blockSize = blockSize ?? DEFAULT_BLOCK_SIZE;
+
+    this._buffer = this.Buffer.allocUnsafe(this._initialSize);
+    this._size = 0;
+  }
+
   protected _size: number;
+
+  get size() {
+    return this._size;
+  }
+
   protected _buffer: Buffer;
 
-  static create(size?: number, blockSize?: number) {
-    return new this(size, blockSize);
+  get buffer(): Buffer {
+    return this._buffer;
   }
 
   get Buffer(): typeof Buffer {
     return (<any>this.constructor).Buffer;
   }
 
-  get size() {
-    return this._size;
-  }
-
-  get buffer(): Buffer {
-    return this._buffer;
-  }
-
   get nativeBuffer() {
     return this._buffer;
   }
 
-  constructor(size?: number, blockSize?: number) {
-    this._initialSize = size ?? DEFAULT_INITIAL_SIZE;
-    this._blockSize = blockSize ?? DEFAULT_BLOCK_SIZE;
-
-    this._buffer = this.Buffer.alloc(this._initialSize);
-    this._size = 0;
+  static create(size?: number, blockSize?: number) {
+    return new this(size, blockSize);
   }
 
   //resize internal buffer if not enough size left
@@ -45,11 +47,9 @@ export class BaseMutableBuffer {
     if (remaining < size) {
       const factor = Math.ceil((size - remaining) / this._blockSize);
 
-      const oldBuffer = this._buffer;
-      this._buffer = this.Buffer.alloc(
-        oldBuffer.length + this._blockSize * factor,
-      );
-      oldBuffer.copy(this._buffer);
+      const prev = this._buffer;
+      this._buffer = this.Buffer.allocUnsafe(prev.length + this._blockSize * factor);
+      prev.copy(this._buffer);
     }
   }
 
@@ -61,17 +61,29 @@ export class BaseMutableBuffer {
     this._size = 0;
   }
 
-  join() {
+  /**
+   *
+   * @param targetOrCreate The target buffer or creating or slice buffer.
+   *    1. Buffer: The target buffer to render;
+   *    2. true: Create new buffer and copy all cached data to it;
+   *    3  false: Slice the cached data from internal buffer, The result cloud be be changed if current MutableBuffer has been reused.
+   */
+  render(targetOrCreate?: Buffer | boolean): Buffer {
+    if (targetOrCreate) {
+      const answer = isBuffer(targetOrCreate) ? targetOrCreate : this.Buffer.allocUnsafe(this.size);
+      this._buffer.copy(answer, 0, 0, this._size);
+      return answer;
+    }
     return this._buffer.slice(0, this._size);
   }
 
-  flush() {
-    const result = this.join();
+  flush(targetOrCreate?: Buffer | boolean) {
+    const result = this.render(targetOrCreate);
     this.clear();
     return result;
   }
 
-  write(data: any, encoding?: BufferEncoding) {
+  write(data: this | string | Buffer | ArrayLike<number> | ArrayBuffer | SharedArrayBuffer, encoding?: BufferEncoding) {
     if (isBuffer(data)) {
       this._ensure(data.length);
       data.copy(this._buffer, this._size);
@@ -82,7 +94,7 @@ export class BaseMutableBuffer {
         this._buffer[this._size + i] = data[i];
       }
       this._size += data.length;
-    } else if (data?.buffer && data.size) {
+    } else if (isMutableBuffer(data)) {
       this._ensure(data.size);
       data.buffer.copy(this._buffer, this._size);
       this._size += data.size;
@@ -300,8 +312,9 @@ export class BaseMutableBuffer {
 }
 
 function isBuffer(obj: any): obj is Buffer {
-  return (
-    typeof obj?.constructor.isBuffer === 'function' &&
-    obj.constructor.isBuffer(obj)
-  );
+  return typeof obj?.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj);
+}
+
+function isMutableBuffer(obj: any): obj is BaseMutableBuffer {
+  return obj?.buffer && obj.size && typeof obj.render === 'function';
 }

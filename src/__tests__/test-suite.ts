@@ -1,8 +1,9 @@
-import {expect} from '@tib/testlab';
+import {expect} from '@loopback/testlab';
 import util from 'util';
 import iconv from 'iconv-lite';
 
 import {BaseMutableBuffer} from '../mbuf';
+import {Buffer} from 'buffer';
 
 export function testMutableBuffer(MutableBuffer: typeof BaseMutableBuffer) {
   function spit(actual: any, expected: any, message?: string) {
@@ -31,22 +32,17 @@ export function testMutableBuffer(MutableBuffer: typeof BaseMutableBuffer) {
 
     it(fn + '(' + val + ')', function () {
       const mb = new MutableBuffer();
-      const result = (<any>mb)[fn](val).join();
+      const result = (<any>mb)[fn](val).render();
       assertBuffers(result, expected, fn);
     });
   }
 
-  function itWriteLengthNumber(
-    type: string,
-    val: any,
-    length: number,
-    expected: any,
-  ) {
+  function itWriteLengthNumber(type: string, val: any, length: number, expected: any) {
     const fn = 'write' + type;
 
     it(fn + '(' + val + ')', function () {
       const mb = new MutableBuffer();
-      const result = (<any>mb)[fn](val, length).join();
+      const result = (<any>mb)[fn](val, length).render();
       assertBuffers(result, expected, fn);
     });
   }
@@ -79,66 +75,20 @@ export function testMutableBuffer(MutableBuffer: typeof BaseMutableBuffer) {
       itWriteFixedNumber('FloatBE', 0xcafebabe, [0x4f, 0x4a, 0xfe, 0xbb]);
       itWriteFixedNumber('FloatLE', 0xcafebabe, [0xbb, 0xfe, 0x4a, 0x4f]);
 
-      itWriteFixedNumber('DoubleBE', 0x1234567890abcdef, [
-        0x43,
-        0xb2,
-        0x34,
-        0x56,
-        0x78,
-        0x90,
-        0xab,
-        0xce,
-      ]);
-      itWriteFixedNumber('DoubleLE', 0x1234567890abcdef, [
-        0xce,
-        0xab,
-        0x90,
-        0x78,
-        0x56,
-        0x34,
-        0xb2,
-        0x43,
-      ]);
+      itWriteFixedNumber('DoubleBE', 0x1234567890abcdef, [0x43, 0xb2, 0x34, 0x56, 0x78, 0x90, 0xab, 0xce]);
+      itWriteFixedNumber('DoubleLE', 0x1234567890abcdef, [0xce, 0xab, 0x90, 0x78, 0x56, 0x34, 0xb2, 0x43]);
 
-      itWriteLengthNumber('UIntBE', 0x1234567890ab, 6, [
-        0x12,
-        0x34,
-        0x56,
-        0x78,
-        0x90,
-        0xab,
-      ]);
-      itWriteLengthNumber('UIntLE', 0x1234567890ab, 6, [
-        0xab,
-        0x90,
-        0x78,
-        0x56,
-        0x34,
-        0x12,
-      ]);
+      itWriteLengthNumber('UIntBE', 0x1234567890ab, 6, [0x12, 0x34, 0x56, 0x78, 0x90, 0xab]);
+      itWriteLengthNumber('UIntLE', 0x1234567890ab, 6, [0xab, 0x90, 0x78, 0x56, 0x34, 0x12]);
 
-      itWriteLengthNumber('IntBE', -0x1234567890ab, 6, [
-        0xed,
-        0xcb,
-        0xa9,
-        0x87,
-        0x6f,
-        0x55,
-      ]);
-      itWriteLengthNumber('IntLE', -0x1234567890ab, 6, [
-        0x55,
-        0x6f,
-        0x87,
-        0xa9,
-        0xcb,
-        0xed,
-      ]);
+      itWriteLengthNumber('IntBE', -0x1234567890ab, 6, [0xed, 0xcb, 0xa9, 0x87, 0x6f, 0x55]);
+      itWriteLengthNumber('IntLE', -0x1234567890ab, 6, [0x55, 0x6f, 0x87, 0xa9, 0xcb, 0xed]);
 
       it('writing multiple number', function () {
         const mb = new MutableBuffer();
         mb.writeUInt32BE(1).writeUInt32BE(10).writeUInt32BE(0);
         expect(mb.size).equal(12);
-        assertBuffers(mb.join(), [0, 0, 0, 1, 0, 0, 0, 0x0a, 0, 0, 0, 0]);
+        assertBuffers(mb.render(), [0, 0, 0, 1, 0, 0, 0, 0x0a, 0, 0, 0, 0]);
       });
     });
 
@@ -148,45 +98,45 @@ export function testMutableBuffer(MutableBuffer: typeof BaseMutableBuffer) {
         mb.writeUInt32BE(1).writeUInt32BE(1).writeUInt32BE(1);
         expect(mb.size).equal(12);
         expect(mb.capacity()).equal(20);
-        assertBuffers(mb.join(), [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1]);
+        assertBuffers(mb.render(), [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1]);
       });
     });
 
     describe('CString', function () {
       it('writes empty cstring', function () {
         const mb = new MutableBuffer();
-        const result = mb.writeCString().join();
+        const result = mb.writeCString().render();
         assertBuffers(result, [0]);
       });
 
       it('writes two empty cstrings', function () {
         const mb = new MutableBuffer();
-        const result = mb.writeCString('').writeCString('').join();
+        const result = mb.writeCString('').writeCString('').render();
         assertBuffers(result, [0, 0]);
       });
 
       it('writes non-empty cstring', function () {
         const mb = new MutableBuffer();
-        const result = mb.writeCString('!!!').join();
+        const result = mb.writeCString('!!!').render();
         assertBuffers(result, [33, 33, 33, 0]);
       });
 
       it('resizes if reached end', function () {
         const mb = new MutableBuffer(3);
-        const result = mb.writeCString('!!!').join();
+        const result = mb.writeCString('!!!').render();
         assertBuffers(result, [33, 33, 33, 0]);
       });
 
       it('writes multiple cstrings', function () {
         const mb = new MutableBuffer();
-        const result = mb.writeCString('!').writeCString('!').join();
+        const result = mb.writeCString('!').writeCString('!').render();
         assertBuffers(result, [33, 0, 33, 0]);
       });
     });
 
     it('writes char', function () {
       const mb = new MutableBuffer(2);
-      const result = mb.writeChar('a').writeChar('b').writeChar('c').join();
+      const result = mb.writeChar('a').writeChar('b').writeChar('c').render();
       assertBuffers(result, [0x61, 0x62, 0x63]);
     });
 
@@ -202,20 +152,20 @@ export function testMutableBuffer(MutableBuffer: typeof BaseMutableBuffer) {
     it('can write arbitrary buffer to the end', function () {
       const mb = new MutableBuffer(4);
       mb.writeCString('!!!');
-      const result = mb.write(Buffer.from('@@@')).join();
+      const result = mb.write(Buffer.from('@@@')).render();
       assertBuffers(result, [33, 33, 33, 0, 0x40, 0x40, 0x40]);
     });
 
     describe('can write normal string', function () {
       const mb = new MutableBuffer(4);
-      let result = mb.write('!').join();
+      let result = mb.write('!').render();
       assertBuffers(result, [33]);
       it('can write cString too', function () {
-        result = mb.writeCString('!').join();
+        result = mb.writeCString('!').render();
         assertBuffers(result, [33, 33, 0]);
       });
       it('can resize', function () {
-        result = mb.write('!!').join();
+        result = mb.write('!!').render();
         assertBuffers(result, [33, 33, 0, 33, 33]);
       });
     });
@@ -223,19 +173,19 @@ export function testMutableBuffer(MutableBuffer: typeof BaseMutableBuffer) {
     describe('can write custom encoding string', function () {
       it('can write utf8 string', function () {
         const mb = new MutableBuffer();
-        const result = mb.write('你好').join();
+        const result = mb.write('你好').render();
         assertBuffers(result, [0xe4, 0xbd, 0xa0, 0xe5, 0xa5, 0xbd]);
       });
 
       it('can write gbk buffer string', function () {
         const mb = new MutableBuffer();
-        const result = mb.write(iconv.encode('你好', 'gbk')).join();
+        const result = mb.write(iconv.encode('你好', 'gbk')).render();
         assertBuffers(result, [0xc4, 0xe3, 0xba, 0xc3]);
       });
 
       it('can write gbk buffer CString', function () {
         const mb = new MutableBuffer();
-        const result = mb.writeCString(iconv.encode('你好', 'gbk')).join();
+        const result = mb.writeCString(iconv.encode('你好', 'gbk')).render();
         assertBuffers(result, [0xc4, 0xe3, 0xba, 0xc3, 0x00]);
       });
     });
@@ -244,7 +194,7 @@ export function testMutableBuffer(MutableBuffer: typeof BaseMutableBuffer) {
       it('can write binary array', function () {
         const data = [0x01, 0x02];
         const mb = new MutableBuffer();
-        const result = mb.write(data).join();
+        const result = mb.write(data).render();
         assertBuffers(result, data);
       });
     });
@@ -255,8 +205,48 @@ export function testMutableBuffer(MutableBuffer: typeof BaseMutableBuffer) {
         const mb = new MutableBuffer();
         const source = new MutableBuffer();
         source.write(data);
-        const result = mb.write(source).join();
+        const result = mb.write(source).render();
         assertBuffers(result, data);
+      });
+    });
+
+    describe('rendering', function () {
+      it('rendering in zero copy', function () {
+        const data1 = [0x01, 0x02];
+        const data2 = [0x99, 0x99];
+        const mb = new MutableBuffer();
+        mb.write(data1);
+        const rendered = mb.render();
+        assertBuffers(rendered, data1);
+        mb.clear();
+        mb.write(data2);
+        assertBuffers(rendered, data2);
+      });
+
+      it('rendering in full copy', function () {
+        const data1 = [0x01, 0x02];
+        const data2 = [0x99, 0x99];
+        const mb = new MutableBuffer();
+        mb.write(data1);
+        const rendered = mb.render(true);
+        assertBuffers(rendered, data1);
+        mb.clear();
+        mb.write(data2);
+        assertBuffers(rendered, data1);
+      });
+
+      it('rendering with buffer provided', function () {
+        const data1 = [0x01, 0x02];
+        const data2 = [0x99, 0x99];
+        const buffer = Buffer.alloc(data1.length);
+        const mb = new MutableBuffer();
+        mb.write(data1);
+        const rendered = mb.render(buffer);
+        expect(rendered).equal(buffer);
+        assertBuffers(rendered, data1);
+        mb.clear();
+        mb.write(data2);
+        assertBuffers(rendered, data1);
       });
     });
 
@@ -266,22 +256,18 @@ export function testMutableBuffer(MutableBuffer: typeof BaseMutableBuffer) {
       mb.writeInt32BE(10401);
       it('clears', function () {
         mb.clear();
-        assertBuffers(mb.join(), []);
+        assertBuffers(mb.render(), []);
       });
       it('writing more', function () {
-        const joinedResult = mb
-          .writeCString('!')
-          .writeInt32BE(9)
-          .writeInt16BE(2)
-          .join();
-        assertBuffers(joinedResult, [33, 0, 0, 0, 0, 9, 0, 2]);
+        const rendered = mb.writeCString('!').writeInt32BE(9).writeInt16BE(2).render();
+        assertBuffers(rendered, [33, 0, 0, 0, 0, 9, 0, 2]);
       });
       it('returns result', function () {
         const flushedResult = mb.flush();
         assertBuffers(flushedResult, [33, 0, 0, 0, 0, 9, 0, 2]);
       });
       it('clears the writer', function () {
-        assertBuffers(mb.join(), []);
+        assertBuffers(mb.render(), []);
         assertBuffers(mb.flush(), []);
       });
     });
@@ -303,10 +289,10 @@ export function testMutableBuffer(MutableBuffer: typeof BaseMutableBuffer) {
 
       it('flush a non-full buffer', function () {
         const mb = new MutableBuffer(10).writeCString('!');
-        const joinedResult = mb.join();
+        const rendered = mb.render();
         const result = mb.flush();
         assertBuffers(result, [33, 0]);
-        assertBuffers(result, joinedResult);
+        assertBuffers(result, rendered);
         expect(mb.size).equal(0);
       });
 
@@ -357,15 +343,11 @@ export function testMutableBuffer(MutableBuffer: typeof BaseMutableBuffer) {
         });
       }
 
-      testTrim(
-        'both start and end have 0',
-        [0x00, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00],
-        {
-          trim: [0x01, 0x02],
-          trimLeft: [0x01, 0x02, 0x00, 0x00, 0x00],
-          trimRight: [0x00, 0x00, 0x01, 0x02],
-        },
-      );
+      testTrim('both start and end have 0', [0x00, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00], {
+        trim: [0x01, 0x02],
+        trimLeft: [0x01, 0x02, 0x00, 0x00, 0x00],
+        trimRight: [0x00, 0x00, 0x01, 0x02],
+      });
 
       testTrim('only start have 0', [0x00, 0x00, 0x01, 0x02], {
         trim: [0x01, 0x02],
