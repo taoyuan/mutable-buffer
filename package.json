@@ -1,6 +1,6 @@
 {
   "name": "mutable-buffer",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "A mutable buffer library for node.js",
   "homepage": "https://github.com/taoyuan/mutable-buffer",
   "author": {
