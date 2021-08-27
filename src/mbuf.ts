@@ -1,6 +1,8 @@
 const DEFAULT_INITIAL_SIZE = 1024;
 const DEFAULT_BLOCK_SIZE = 1024;
 
+type WriteData = BaseMutableBuffer | string | Buffer | ArrayLike<number> | ArrayBuffer | SharedArrayBuffer;
+
 export class BaseMutableBuffer {
   static Buffer: typeof Buffer;
 
@@ -83,29 +85,33 @@ export class BaseMutableBuffer {
     return result;
   }
 
-  write(data: this | string | Buffer | ArrayLike<number> | ArrayBuffer | SharedArrayBuffer, encoding?: BufferEncoding) {
-    if (isBuffer(data)) {
-      this._ensure(data.length);
-      data.copy(this._buffer, this._size);
-      this._size += data.length;
-    } else if (Array.isArray(data)) {
-      this._ensure(data.length);
-      for (let i = 0; i < data.length; i++) {
-        this._buffer[this._size + i] = data[i];
+  write(source: WriteData, encoding?: BufferEncoding): number;
+  write(source: WriteData, ...args: any[]): number;
+  write(source: WriteData, ...args: any[]): number {
+    if (isBuffer(source)) {
+      this._ensure(source.length);
+      source.copy(this._buffer, this._size);
+      this._size += source.length;
+    } else if (Array.isArray(source)) {
+      this._ensure(source.length);
+      for (let i = 0; i < source.length; i++) {
+        this._buffer[this._size + i] = source[i];
       }
-      this._size += data.length;
-    } else if (isMutableBuffer(data)) {
-      this._ensure(data.size);
-      data.buffer.copy(this._buffer, this._size);
-      this._size += data.size;
+      this._size += source.length;
+    } else if (isMutableBuffer(source)) {
+      this._ensure(source.size);
+      source.buffer.copy(this._buffer, this._size);
+      this._size += source.size;
     } else {
-      data = data + '';
-      const len = this.Buffer.byteLength(data, encoding);
+      const last = args.length > 0 ? args[args.length - 1] : undefined;
+      const encoding = typeof last === 'string' ? (last as BufferEncoding) : undefined;
+      source = source + '';
+      const len = this.Buffer.byteLength(source, encoding);
       this._ensure(len);
-      this._buffer.write(data, this._size, len, encoding);
+      this._buffer.write(source, this._size, len, encoding);
       this._size += len;
     }
-    return this;
+    return this.size;
   }
 
   writeCString(data?: string | Buffer, encoding?: BufferEncoding) {
@@ -124,127 +130,127 @@ export class BaseMutableBuffer {
     }
 
     this._buffer[this._size++] = 0; // null terminator
-    return this;
+    return this.size;
   }
 
   writeChar(c: string) {
     this._ensure(1);
     this._buffer.write(c, this._size, 1);
     this._size++;
-    return this;
+    return this.size;
   }
 
   writeUIntLE(value: number, byteLength: number) {
     this._ensure(byteLength >>> 0);
     this._size = this._buffer.writeUIntLE(value, this._size, byteLength);
-    return this;
+    return this.size;
   }
 
   writeUIntBE(value: number, byteLength: number) {
     this._ensure(byteLength >>> 0);
     this._size = this._buffer.writeUIntBE(value, this._size, byteLength);
-    return this;
+    return this.size;
   }
 
   writeUInt8(value: number) {
     this._ensure(1);
     this._size = this._buffer.writeUInt8(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeUInt16LE(value: number) {
     this._ensure(2);
     this._size = this._buffer.writeUInt16LE(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeUInt16BE(value: number) {
     this._ensure(2);
     this._size = this._buffer.writeUInt16BE(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeUInt32LE(value: number) {
     this._ensure(4);
     this._size = this._buffer.writeUInt32LE(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeUInt32BE(value: number) {
     this._ensure(4);
     this._size = this._buffer.writeUInt32BE(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeIntLE(value: number, byteLength: number) {
     this._ensure(byteLength >>> 0);
     this._size = this._buffer.writeIntLE(value, this._size, byteLength);
-    return this;
+    return this.size;
   }
 
   writeIntBE(value: number, byteLength: number) {
     this._ensure(byteLength >>> 0);
     this._size = this._buffer.writeIntBE(value, this._size, byteLength);
-    return this;
+    return this.size;
   }
 
   writeInt8(value: number) {
     this._ensure(1);
     this._size = this._buffer.writeInt8(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeInt16LE(value: number) {
     this._ensure(2);
     this._size = this._buffer.writeInt16LE(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeInt16BE(value: number) {
     this._ensure(2);
     this._size = this._buffer.writeInt16BE(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeInt32LE(value: number) {
     this._ensure(4);
     this._size = this._buffer.writeInt32LE(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeInt32BE(value: number) {
     this._ensure(4);
     this._size = this._buffer.writeInt32BE(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeFloatLE(value: number) {
     this._ensure(4);
     this._size = this._buffer.writeFloatLE(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeFloatBE(value: number) {
     this._ensure(4);
     this._size = this._buffer.writeFloatBE(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeDoubleLE(value: number) {
     this._ensure(8);
     this._size = this._buffer.writeDoubleLE(value, this._size);
-    return this;
+    return this.size;
   }
 
   writeDoubleBE(value: number) {
     this._ensure(8);
     this._size = this._buffer.writeDoubleBE(value, this._size);
-    return this;
+    return this.size;
   }
 
   trim() {
     if (this.size <= 0) {
-      return this;
+      return this.size;
     }
 
     let begin = 0;
@@ -265,49 +271,49 @@ export class BaseMutableBuffer {
     }
 
     if (begin === 0 && end === this.size) {
-      return this;
+      return this.size;
     }
 
     this._buffer = this._buffer.slice(begin, end);
     this._size = end - begin;
-    return this;
+    return this.size;
   }
 
   trimLeft() {
     if (this.size <= 0 || this._buffer[0]) {
-      return this;
+      return this.size;
     }
 
     for (let i = 0; i < this.size; i++) {
       if (this._buffer[i]) {
         this._buffer = this._buffer.slice(i);
         this._size = this.size - i;
-        return this;
+        return this.size;
       }
     }
     if (this.size > 0) {
       this._size = 0;
     }
-    return this;
+    return this.size;
   }
 
   trimRight() {
     if (this.size <= 0 || this._buffer[this.size - 1]) {
-      return this;
+      return this.size;
     }
 
     for (let i = this.size; i > 0; i--) {
       if (this._buffer[i - 1]) {
         this._buffer = this._buffer.slice(0, i);
         this._size = i;
-        return this;
+        return this.size;
       }
     }
 
     if (this.size > 0) {
       this._size = 0;
     }
-    return this;
+    return this.size;
   }
 }
 
